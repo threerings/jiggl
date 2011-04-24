@@ -23,7 +23,7 @@
     <taskdef resource="org/apache/maven/artifact/ant/antlib.xml"
              uri="urn:maven-artifact-ant" classpath="${maven-ant.jar}"/>
     <artifact:pom id="pom" file="pom.xml"/>
-    <artifact:dependencies pathId="classpath" pomRefId="pom"/>
+    <artifact:dependencies pomRefId="pom" pathId="classpath" sourcesFilesetId="sourcesset"/>
     <path id="test.classpath">
       <path refid="classpath"/>
       <pathelement location="${classes.dir}"/>
