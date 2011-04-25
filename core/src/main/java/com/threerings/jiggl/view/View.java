@@ -56,7 +56,7 @@ public abstract class View
     /**
      * Creates a visible to render the supplied tile. Hides platform-specific machinery.
      */
-    public abstract TileViz newTileViz (Tile tile);
+    public abstract Viz newTileViz (Tile tile);
 
     /** A list of our active visibles. */
     protected List<Viz> _vizs = new ArrayList<Viz>();
