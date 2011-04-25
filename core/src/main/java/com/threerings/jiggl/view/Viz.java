@@ -14,10 +14,10 @@ import com.threerings.jiggl.util.Scalar;
 public abstract class Viz
 {
     /** The x-component of our (container relative) translation. */
-    public final Scalar transX = new Scalar(0);
+    public final Scalar x = new Scalar(0);
 
     /** The y-component of our (container relative) translation. */
-    public final Scalar transY = new Scalar(0);
+    public final Scalar y = new Scalar(0);
 
     /** The x-component of our scale. */
     public final Scalar scaleX = new Scalar(1);
