@@ -12,100 +12,119 @@ import com.threerings.jiggl.util.Scalar;
 /**
  * Handles the animation of viz properties (position, rotation, etc.).
  */
-public interface Tweener
+public abstract class Tweener
 {
     /**
      * Creates a tween on the specified value using the supplied interpolator.
      */
-    Tween.One tween (Interpolator interp, Scalar value);
+    public Tween.One tween (Interpolator interp, Scalar value)
+    {
+        return register(new Tween.One(interp, value));
+    }
 
     /**
      * Creates a linear tween on the specified value.
      */
-    Tween.One linear (Scalar value);
+    public Tween.One linear (Scalar value)
+    {
+        return tween(Interpolator.LINEAR, value);
+    }
 
     /**
      * Creates an {@link Interpolator#EASE_IN} tween on the specified value.
      */
-    Tween.One easeIn (Scalar value);
+    public Tween.One easeIn (Scalar value)
+    {
+        return tween(Interpolator.EASE_IN, value);
+    }
 
     /**
      * Creates an {@link Interpolator#EASE_OUT} tween on the specified value.
      */
-    Tween.One easeOut (Scalar value);
+    public Tween.One easeOut (Scalar value)
+    {
+        return tween(Interpolator.EASE_OUT, value);
+    }
 
     /**
      * Creates an {@link Interpolator#EASE_INOUT} tween on the specified value.
      */
-    Tween.One easeInOut (Scalar value);
+    public Tween.One easeInOut (Scalar value)
+    {
+        return tween(Interpolator.EASE_INOUT, value);
+    }
 
     /**
      * Creates a tween on the specified values using the supplied interpolator.
      */
-    Tween.Two tween (Interpolator interp, Scalar x, Scalar y);
+    public Tween.Two tween (Interpolator interp, Scalar x, Scalar y)
+    {
+        return register(new Tween.Two(interp, x, y));
+    }
 
     /**
      * Creates a linear tween on the specified values.
      */
-    Tween.Two linear (Scalar x, Scalar y);
+    public Tween.Two linear (Scalar x, Scalar y)
+    {
+        return tween(Interpolator.LINEAR, x, y);
+    }
 
     /**
      * Creates an {@link Interpolator#EASE_IN} tween on the specified values.
      */
-    Tween.Two easeIn (Scalar x, Scalar y);
+    public Tween.Two easeIn (Scalar x, Scalar y)
+    {
+        return tween(Interpolator.EASE_IN, x, y);
+    }
 
     /**
      * Creates an {@link Interpolator#EASE_OUT} tween on the specified values.
      */
-    Tween.Two easeOut (Scalar x, Scalar y);
+    public Tween.Two easeOut (Scalar x, Scalar y)
+    {
+        return tween(Interpolator.EASE_OUT, x, y);
+    }
 
     /**
      * Creates an {@link Interpolator#EASE_INOUT} tween on the specified values.
      */
-    Tween.Two easeInOut (Scalar x, Scalar y);
+    public Tween.Two easeInOut (Scalar x, Scalar y)
+    {
+        return tween(Interpolator.EASE_INOUT, x, y);
+    }
+
+    /**
+     * Creates a tween that delays for the specified number of seconds.
+     */
+    public Tween.Delay delay (float seconds)
+    {
+        return register(new Tween.Delay(seconds));
+    }
+
+    /**
+     * Creates a tween that executes the supplied runnable and immediately completes.
+     */
+    public Tween.Action action (Runnable action)
+    {
+        return register(new Tween.Action(action));
+    }
+
+    protected abstract <T extends Tween> T register (T tween);
 
     /** Implementation details, avert your eyes. */
-    public static class Impl implements Tweener, Driver.Tickable {
+    public static class Impl extends Tweener implements Driver.Tickable {
         public Impl (Driver driver) {
             driver.addTickable(this);
         }
 
-        public Tween.One tween (Interpolator interp, Scalar value) {
-            Tween.One tween = new Tween.One(interp, value);
+        @Override // from Tweener
+        protected <T extends Tween> T register (T tween) {
             _ntweens.add(tween);
             return tween;
         }
-        public Tween.One linear (Scalar value) {
-            return tween(Interpolator.LINEAR, value);
-        }
-        public Tween.One easeIn (Scalar value) {
-            return tween(Interpolator.EASE_IN, value);
-        }
-        public Tween.One easeOut (Scalar value) {
-            return tween(Interpolator.EASE_OUT, value);
-        }
-        public Tween.One easeInOut (Scalar value) {
-            return tween(Interpolator.EASE_INOUT, value);
-        }
 
-        public Tween.Two tween (Interpolator interp, Scalar x, Scalar y) {
-            Tween.Two tween = new Tween.Two(interp, x, y);
-            _ntweens.add(tween);
-            return tween;
-        }
-        public Tween.Two linear (Scalar x, Scalar y) {
-            return tween(Interpolator.LINEAR, x, y);
-        }
-        public Tween.Two easeIn (Scalar x, Scalar y) {
-            return tween(Interpolator.EASE_IN, x, y);
-        }
-        public Tween.Two easeOut (Scalar x, Scalar y) {
-            return tween(Interpolator.EASE_OUT, x, y);
-        }
-        public Tween.Two easeInOut (Scalar x, Scalar y) {
-            return tween(Interpolator.EASE_INOUT, x, y);
-        }
-
+        // from interface Driver.Tickable
         public boolean tick (float time) {
             if (!_ntweens.isEmpty()) {
                 for (int ii = 0, ll = _ntweens.size(); ii < ll; ii++) {
@@ -115,7 +134,7 @@ public interface Tweener
                 _ntweens.clear();
             }
             for (int ii = 0, ll = _tweens.size(); ii < ll; ii++) {
-                if (_tweens.get(ii).apply(time)) {
+                if (_tweens.get(ii).apply(this, time)) {
                     _tweens.remove(ii--);
                     ll -= 1;
                 }

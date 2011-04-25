@@ -11,7 +11,7 @@ import com.threerings.jiggl.util.Scalar;
 public abstract class Tween
 {
     /** A tween that animates a single scalar value. */
-    public static class One extends Tween
+    public static class One extends Interped
     {
         public One (Interpolator interp, Scalar value) {
             super(interp);
@@ -53,7 +53,7 @@ public abstract class Tween
     }
 
     /** A tween that animates a pair of scalar values (usually a position). */
-    public static class Two extends Tween
+    public static class Two extends Interped
     {
         public Two (Interpolator interp, Scalar x, Scalar y) {
             super(interp);
@@ -102,27 +102,51 @@ public abstract class Tween
         protected float _tox, _toy;
     }
 
-    /**
-     * Configures the duration over which this animation takes place (in seconds). Default: 1.
-     */
-    public Tween in (float duration)
+    /** A tween that simply delays a specified number of seconds. */
+    public static class Delay extends Tween
     {
-        _duration = duration;
-        return this;
+        public Delay (float duration) {
+            _duration = duration;
+        }
+
+        protected boolean apply (float time) {
+            return (time-_start >= _duration);
+        }
+
+        protected final float _duration;
+    }
+
+    /** A tween that executes an action and completes immediately. */
+    public static class Action extends Tween
+    {
+        public Action (Runnable action) {
+            _action = action;
+        }
+
+        protected boolean apply (float time) {
+            _action.run();
+            return true;
+        }
+
+        protected Runnable _action;
     }
 
     /**
-     * Configures a callback to be invoked when this tween has completed.
+     * Returns a tween factory for constructing a tween that will be queued up for execution when
+     * the current tween is completes.
      */
-    public Tween onComplete (/* todo */)
+    public Tweener then ()
     {
-        // TODO
-        return this;
+        return new Tweener() {
+            protected <T extends Tween> T register (T tween) {
+                _then = tween;
+                return tween;
+            }
+        };
     }
 
-    protected Tween (Interpolator interp)
+    protected Tween ()
     {
-        _interp = interp;
     }
 
     protected void init (float time)
@@ -130,9 +154,35 @@ public abstract class Tween
         _start = time;
     }
 
+    protected boolean apply (Tweener tweener, float time)
+    {
+        if (!apply(time)) return false;
+        if (_then != null) {
+            tweener.register(_then);
+        }
+        return true;
+    }
+
     protected abstract boolean apply (float time);
 
-    protected final Interpolator _interp;
-    protected float _duration = 1;
+    protected static abstract class Interped extends Tween
+    {
+        /**
+         * Configures the duration over which this animation takes place (in seconds). Default: 1.
+         */
+        public Tween in (float duration) {
+            _duration = duration;
+            return this;
+        }
+
+        protected Interped (Interpolator interp) {
+            _interp = interp;
+        }
+
+        protected final Interpolator _interp;
+        protected float _duration = 1;
+    }
+
     protected float _start;
+    protected Tween _then;
 }
