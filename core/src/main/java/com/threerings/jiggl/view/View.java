@@ -6,6 +6,8 @@ package com.threerings.jiggl.view;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.threerings.jiggl.rsrc.Tile;
+
 /**
  * Coordinates the display and animation of a collection of {@link Viz} instances.
  */
@@ -50,6 +52,11 @@ public abstract class View
             _vizs.get(ii).render(this);
         }
     }
+
+    /**
+     * Creates a visible to render the supplied tile. Hides platform-specific machinery.
+     */
+    public abstract TileViz newTileViz (Tile tile);
 
     /** A list of our active visibles. */
     protected List<Viz> _vizs = new ArrayList<Viz>();
