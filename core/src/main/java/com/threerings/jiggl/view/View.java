@@ -44,19 +44,24 @@ public abstract class View
     }
 
     /**
-     * Instructs this view to render its visibles.
+     * Executes this view's rendering commands.
      */
-    public void render ()
-    {
-        for (int ii = 0, ll = _vizs.size(); ii < ll; ii++) {
-            _vizs.get(ii).render(this);
-        }
-    }
+    public abstract void render ();
 
     /**
      * Creates a visible to render the supplied tile. Hides platform-specific machinery.
      */
     public abstract Viz newTileViz (Tile tile);
+
+    /**
+     * Renders the visibles registered with this view.
+     */
+    protected void renderVisibles ()
+    {
+        for (int ii = 0, ll = _vizs.size(); ii < ll; ii++) {
+            _vizs.get(ii).render(this);
+        }
+    }
 
     /** A list of our active visibles. */
     protected List<Viz> _vizs = new ArrayList<Viz>();
