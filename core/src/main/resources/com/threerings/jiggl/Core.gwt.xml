@@ -1,10 +1,4 @@
 <module>
   <inherits name="com.google.gwt.user.User"/>
-<!--
-  <source path="client"/>
-  <source path="distrib"/>
-  <source path="io"/>
-  <source path="net"/>
-  <source path="util"/>
--->
+  <source path=""/>
 </module>
