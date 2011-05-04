@@ -49,7 +49,12 @@ public abstract class View
     public abstract void render ();
 
     /**
-     * Creates a visible to render the supplied tile. Hides platform-specific machinery.
+     * Creates a visible that renders the supplied geometry.
+     */
+    public abstract Viz newGeomViz (Geometry geom);
+
+    /**
+     * Creates a visible to render the supplied tile.
      */
     public abstract Viz newTileViz (Tile tile);
 

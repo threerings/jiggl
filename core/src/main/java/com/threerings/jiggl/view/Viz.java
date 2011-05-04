@@ -3,6 +3,7 @@
 
 package com.threerings.jiggl.view;
 
+import com.threerings.jiggl.util.Color;
 import com.threerings.jiggl.util.Scalar;
 
 /**
@@ -28,13 +29,20 @@ public abstract class Viz
     /** The rotation of this visible, in radians. */
     public final Scalar rotation = new Scalar(0);
 
-    /** Returns the base width of this visible (in pixels). The displayed width may be modified by
-     * the transform matrix. */
-    public abstract int getWidth ();
+    /** The color of this visible, or null. */
+    public Color color;
 
-    /** Returns the base height of this visible (in pixels). The displayed height may be modified
-     * by the transform matrix. */
-    public abstract int getHeight ();
+    /**
+     * Returns the width of this visible, including local scaling transformations (but not
+     * rotation). Transformations applied by a parent of this visible are also not included.
+     */
+    public abstract float getWidth ();
+
+    /**
+     * Returns the height of this visible, including local scaling transformations (but not
+     * rotation). Transformations applied by a parent of this visible are also not included.
+     */
+    public abstract float getHeight ();
 
     /**
      * Called when this viz is added to a view. The viz should prepare any buffers or shader
