@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<project name="jiggl-webgl" default="compile" xmlns:artifact="urn:maven-artifact-ant">
+  <property name="build.copy-gwt-sources" value="true"/>
+  <import file="../etc/build-support.xml"/>
+
+  <property name="webapp.dir" value="${deploy.dir}/webapp"/>
+  <target name="-prep-webapp" depends="-prepare">
+    <mkdir dir="${webapp.dir}"/>
+    <copy todir="${webapp.dir}">
+      <fileset dir="src/test/webapp" includes="**"/>
+    </copy>
+  </target>
+
+  <target name="devmode" depends="-prep-webapp,compile" description="Runs GWT development mode.">
+    <java fork="true" classname="com.google.gwt.dev.DevMode">
+      <classpath>
+<!--    TODO: this should work, but it doesn't:
+        <pathelement path="${com.cooglecode.gwtgl:gwtgl:jar:sources}"/>
+-->
+        <pathelement path="/Users/mdb/.m2/repository/com/googlecode/gwtgl/gwtgl/0.9-SNAPSHOT/gwtgl-0.9-SNAPSHOT-sources.jar"/>
+        <pathelement path="../core/${src.dir}"/>
+        <pathelement path="../core/src/main/resources"/>
+        <pathelement path="${src.dir}"/>
+        <pathelement path="src/main/resources"/>
+        <pathelement path="${test.dir}"/>
+        <pathelement path="src/test/resources"/>
+        <path refid="classpath"/>
+      </classpath>
+      <jvmarg value="-Xmx256M"/>
+      <arg value="-startupUrl"/>
+      <arg value="index.html"/>
+      <arg value="-war"/>
+      <arg value="${deploy.dir}/webapp"/>
+      <arg value="com.threerings.jiggl.TestViewer"/>
+    </java>
+  </target>
+</project>

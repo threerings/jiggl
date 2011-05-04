@@ -1,0 +1,6 @@
+<module>
+  <inherits name="com.google.gwt.canvas.Canvas"/>
+  <inherits name="com.threerings.jiggl.Core"/>
+  <inherits name="com.googlecode.gwtgl.binding"/>
+  <source path=""/>
+</module>

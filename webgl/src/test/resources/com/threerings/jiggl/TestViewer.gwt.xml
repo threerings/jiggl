@@ -1,0 +1,6 @@
+<module rename-to="testviewer">
+  <inherits name="com.threerings.jiggl.WebGL"/>
+  <!--<inherits name="com.threerings.gwt.Utils"/>-->
+  <source path="test"/>
+  <entry-point class="com.threerings.jiggl.test.TestViewer"/>
+</module>
