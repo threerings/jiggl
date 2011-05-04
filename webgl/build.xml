@@ -34,4 +34,25 @@
       <arg value="com.threerings.jiggl.TestViewer"/>
     </java>
   </target>
+
+  <target name="gclient" depends="-prep-webapp,compile" description="Compiles GWT client.">
+    <java fork="true" maxmemory="1024M" failonerror="true" classname="com.google.gwt.dev.Compiler">
+      <classpath>
+        <pathelement path="/Users/mdb/.m2/repository/com/googlecode/gwtgl/gwtgl/0.9-SNAPSHOT/gwtgl-0.9-SNAPSHOT-sources.jar"/>
+        <pathelement path="../core/${src.dir}"/>
+        <pathelement path="../core/src/main/resources"/>
+        <pathelement path="${src.dir}"/>
+        <pathelement path="src/main/resources"/>
+        <pathelement path="${test.dir}"/>
+        <pathelement path="src/test/resources"/>
+        <path refid="classpath"/>
+      </classpath>
+      <jvmarg value="-Djava.awt.headless=true"/>
+      <!--<arg value="-style"/><arg value="pretty"/>-->
+      <!--<arg value="-gen"/><arg value="${deploy.dir}/gwt-gen"/>-->
+      <arg value="-war"/>
+      <arg value="${deploy.dir}/webapp"/>
+      <arg value="com.threerings.jiggl.TestViewer"/>
+    </java>
+  </target>
 </project>
