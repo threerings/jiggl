@@ -1,5 +1,6 @@
 //
-// $Id$
+// Jiggl WebGL - GWT + WebGL backend for 2D game framework
+// http://github.com/threerings/jiggl/blob/master/LICENSE
 
 package com.threerings.jiggl.rsrc;
 

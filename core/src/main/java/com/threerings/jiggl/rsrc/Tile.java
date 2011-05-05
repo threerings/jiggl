@@ -1,5 +1,6 @@
 //
-// $Id$
+// Jiggl Core - 2D game development library
+// http://github.com/threerings/jiggl/blob/master/LICENSE
 
 package com.threerings.jiggl.rsrc;
 
