@@ -104,6 +104,15 @@ public abstract class Tweener
     }
 
     /**
+     * Returns a tweener which can be used to construct a tween that will be repeated until
+     * canceled.
+     */
+    public Tweener repeat ()
+    {
+        return register(new Tween.Repeat()).then();
+    }
+
+    /**
      * Creates a tween that executes the supplied runnable and immediately completes.
      */
     public Tween.Action action (Runnable action)

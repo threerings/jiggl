@@ -41,7 +41,8 @@ public class GeomTest
 
         quad3.x.value = 3;
         quad3.y.value = 3;
-        ctx.tweener.linear(quad3.rotation).to((float)Math.PI).in(2);
+        ctx.tweener.repeat().linear(quad3.rotation).to(2*(float)Math.PI).in(2).
+            then().linear(quad3.rotation).to(0).in(0);
 
         quad4.x.value = 3;
         quad4.y.value = 3;

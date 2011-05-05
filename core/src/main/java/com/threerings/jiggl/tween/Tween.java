@@ -32,11 +32,13 @@ public abstract class Tween
             return this;
         }
 
+        @Override
         protected void init (float time) {
             super.init(time);
             if (_from == Float.MIN_VALUE) _from = _value.value;
         }
 
+        @Override
         protected boolean apply (float time) {
             float dt = time-_start;
             if (dt < _duration) {
@@ -79,12 +81,14 @@ public abstract class Tween
             return this;
         }
 
+        @Override
         protected void init (float time) {
             super.init(time);
             if (_fromx == Float.MIN_VALUE) _fromx = _x.value;
             if (_fromy == Float.MIN_VALUE) _fromy = _y.value;
         }
 
+        @Override
         protected boolean apply (float time) {
             float dt = time-_start;
             if (dt < _duration) {
@@ -110,8 +114,14 @@ public abstract class Tween
             _duration = duration;
         }
 
+        @Override
         protected boolean apply (float time) {
             return (time-_start >= _duration);
+        }
+
+        @Override
+        protected float getOverrun (float time) {
+            return (time - _start) - _duration;
         }
 
         protected final float _duration;
@@ -124,6 +134,7 @@ public abstract class Tween
             _action = action;
         }
 
+        @Override
         protected boolean apply (float time) {
             _action.run();
             return true;
@@ -132,15 +143,58 @@ public abstract class Tween
         protected Runnable _action;
     }
 
+    /** A tween that repeats its underlying tween over and over again (until removed). */
+    public static class Repeat extends Tween
+    {
+        /** Cancels this repeating tween. */
+        public void cancel () {
+            _cancelled = true;
+        }
+
+        @Override
+        protected void init (float time) {
+            // a normal tween will have _current initialized to itself; we want to skip ourselves
+            // and go right to our to-be-repeated tween, and initialize it immediately
+            _current = _next;
+            _current.init(time);
+        }
+
+        @Override
+        protected boolean apply (float time) {
+            return false; // not used
+        }
+
+        @Override
+        protected boolean apply (Tweener tweener, float time)
+        {
+            // if we're canceled, stop now
+            if (_cancelled) return true;
+
+            // if our current chain of tweens is still running, keep going
+            if (!super.apply(tweener, time)) return false;
+
+            // otherwise, reset to the head of the chain and keep going
+            float overrun = _current.getOverrun(time);
+            _current = _next;
+            _current.init(time-overrun);
+            return false;
+        }
+
+        protected boolean _cancelled = false;
+    }
+
     /**
      * Returns a tween factory for constructing a tween that will be queued up for execution when
      * the current tween is completes.
      */
     public Tweener then ()
     {
+        if (_next != null) {
+            throw new IllegalStateException("This tween already has a 'then' tween.");
+        }
         return new Tweener() {
             protected <T extends Tween> T register (T tween) {
-                _then = tween;
+                _next = tween;
                 return tween;
             }
         };
@@ -157,14 +211,30 @@ public abstract class Tween
 
     protected boolean apply (Tweener tweener, float time)
     {
-        if (!apply(time)) return false;
-        if (_then != null) {
-            tweener.register(_then);
-        }
-        return true;
+        // if the current tween is still running, keep going
+        if (!_current.apply(time)) return false;
+
+        // if the current tween is finished and we have no next tween, then we're done
+        if (_current._next == null) return true;
+
+        // otherwise initialize our next tween (accounting for any overrun on our current tween)
+        // and keep going
+        float overrun = _current.getOverrun(time);
+        _current = _current._next;
+        _current.init(time-overrun);
+        return false;
     }
 
     protected abstract boolean apply (float time);
+
+    /**
+     * Returns the amount of time this tween has overrun its duration, given the supplied current
+     * timestamp. The result may be negative if the tween is not complete.
+     */
+    protected float getOverrun (float time)
+    {
+        return 0f;
+    }
 
     protected static abstract class Interped extends Tween
     {
@@ -180,10 +250,16 @@ public abstract class Tween
             _interp = interp;
         }
 
+        @Override
+        protected float getOverrun (float time) {
+            return (time - _start) - _duration;
+        }
+
         protected final Interpolator _interp;
         protected float _duration = 1;
     }
 
     protected float _start;
-    protected Tween _then;
+    protected Tween _current = this;
+    protected Tween _next;
 }
