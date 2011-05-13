@@ -19,15 +19,10 @@ public class TileVizTest
     {
         final TileSet tiles = ctx.tiles.load("testtiles.png");
         final Viz tile0 = ctx.view.add(ctx.view.newTileViz(tiles.get(0)));
-        tile0.color = new Color(1, 0, 0);
         final Viz tile1 = ctx.view.add(ctx.view.newTileViz(tiles.get(1)));
-        tile1.color = new Color(0, 1, 0);
         final Viz tile2 = ctx.view.add(ctx.view.newTileViz(tiles.get(2)));
-        tile2.color = new Color(0, 0, 1);
         final Viz tile3 = ctx.view.add(ctx.view.newTileViz(tiles.get(3)));
-        tile3.color = new Color(0, 1, 1);
         final Viz tile4 = ctx.view.add(ctx.view.newTileViz(tiles.get(4)));
-        tile4.color = new Color(1, 1, 0);
 
         ctx.tweener.linear(tile0.x).to(2).in(2).then().delay(1).then().action(new Runnable() {
             public void run () {

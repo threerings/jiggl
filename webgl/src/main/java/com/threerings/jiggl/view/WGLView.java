@@ -6,6 +6,7 @@ package com.threerings.jiggl.view;
 
 import com.google.gwt.canvas.client.Canvas;
 import com.threerings.jiggl.rsrc.Tile;
+import com.threerings.jiggl.util.Color;
 
 import com.googlecode.gwtgl.binding.WebGLRenderingContext;
 
@@ -46,15 +47,15 @@ public class WGLView extends View
     }
 
     @Override // from View
-    public Viz newGeomViz (Geometry geom)
+    public Viz newGeomViz (Geometry geom, Color color)
     {
-        return new WGLViz(geom, new ModelViewShader());
+        return new ColorViz(geom, color);
     }
 
     @Override // from View
     public Viz newTileViz (Tile tile)
     {
-        throw new RuntimeException("TODO");
+        return new TileViz(renderer, tile);
     }
 
     protected final WebGLRenderingContext _wctx;

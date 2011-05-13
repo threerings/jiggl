@@ -8,8 +8,6 @@ import com.googlecode.gwtgl.binding.WebGLProgram;
 import com.googlecode.gwtgl.binding.WebGLRenderingContext;
 import com.googlecode.gwtgl.binding.WebGLShader;
 
-import com.threerings.jiggl.util.MatrixUtil;
-
 /**
  * Manages fragment and vertex shader programs, their compilation and the binding of their uniform
  * variables.

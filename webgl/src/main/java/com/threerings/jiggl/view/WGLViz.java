@@ -5,14 +5,9 @@
 package com.threerings.jiggl.view;
 
 import com.google.gwt.core.client.GWT;
-import com.googlecode.gwtgl.array.Float32Array;
-import com.googlecode.gwtgl.binding.WebGLBuffer;
-import com.googlecode.gwtgl.binding.WebGLProgram;
 import com.googlecode.gwtgl.binding.WebGLRenderingContext;
-import com.googlecode.gwtgl.binding.WebGLShader;
 import com.googlecode.gwtgl.binding.WebGLUniformLocation;
 
-import com.threerings.jiggl.util.GeomUtil;
 import com.threerings.jiggl.util.MatrixUtil;
 
 /**
@@ -39,49 +34,51 @@ public class WGLViz extends Viz
     }
 
     @Override // from Viz
+    public boolean isAdded ()
+    {
+        return (_view != null);
+    }
+
+    @Override // from Viz
     protected void onAdd (View view)
     {
-        WGLRenderer r = ((WGLView)view).renderer;
-        _shader.init(r);
+        _view = (WGLView)view;
+        _shader.init(_view.renderer);
     }
 
     @Override // from Viz
-    protected void onRemove (View view)
+    protected void onRemove ()
     {
-        WGLRenderer r = ((WGLView)view).renderer;
-        _shader.delete(r);
+        _shader.delete(_view.renderer);
+        _view = null;
     }
 
     @Override // from Viz
-    protected void render (View view)
+    protected void render ()
     {
-        WGLRenderer wr = ((WGLView)view).renderer;
-
-        float[] transform = MatrixUtil.transform4(
-            x.value, y.value, 0, scaleX.value, scaleY.value, 1, rotation.value);
+        WGLRenderer wr = _view.renderer;
 
         _shader.bind(wr);
-        wr.wctx.uniformMatrix4fv(_shader.mviewMatrix, false, transform);
-        if (this.color != null) {
-            wr.wctx.uniform4fv(_shader.modelColor, this.color.toVec4fv());
-        }
+        bindUniforms(wr);
         _geom.bind(wr);
-        wr.wctx.vertexAttribPointer(
-            _shader.vposAttr, _geom.compPerAttr, WebGLRenderingContext.FLOAT, false, 0, 0);
+        bindAttributes(wr);
         _geom.draw(wr);
     }
 
-    protected static WebGLShader getShader (WebGLRenderingContext wctx, int type, String source)
+    protected void bindUniforms (WGLRenderer wr)
     {
-        WebGLShader shader = wctx.createShader(type);
-        wctx.shaderSource(shader, source);
-        wctx.compileShader(shader);
-        if (!wctx.getShaderParameterb(shader, WebGLRenderingContext.COMPILE_STATUS)) {
-            throw new RuntimeException(wctx.getShaderInfoLog(shader));
-        }
-        return shader;
+        float[] transform = MatrixUtil.transform4(
+            x.value, y.value, 0, scaleX.value, scaleY.value, 1, rotation.value);
+        wr.wctx.uniformMatrix4fv(_shader.mviewMatrix, false, transform);
     }
 
+    protected void bindAttributes (WGLRenderer wr)
+    {
+        wr.wctx.vertexAttribPointer(
+            _shader.vposAttr, _geom.compPerAttr, WebGLRenderingContext.FLOAT, false, 0, 0);
+    }
+
+    protected WGLView _view;
     protected Geometry _geom;
     protected ModelViewShader _shader;
 

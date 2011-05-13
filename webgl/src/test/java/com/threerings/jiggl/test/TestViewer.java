@@ -24,7 +24,7 @@ public class TestViewer implements EntryPoint
         canvas.setWidth("500px");
         canvas.setHeight("500px");
         RootPanel.get("client").add(canvas);
-        Context ctx = WebGL.create(canvas);
+        Context ctx = WebGL.create(canvas, GWT.getModuleBaseURL());
         new GeomTest().execute(ctx);
     }
 }

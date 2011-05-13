@@ -9,13 +9,17 @@ package com.threerings.jiggl.rsrc;
  */
 public class WGLTileSetLoader extends TileSetLoader
 {
+    public WGLTileSetLoader (String baseURL)
+    {
+        _baseURL = baseURL + (baseURL.endsWith("/") ? "" : "/");
+    }
+
+    @Override // from TileSetLoader
     public TileSet load (String tileSetId)
     {
-        // TEMP
-        return new TileSet() {
-            public Tile get (int index) {
-                return null;
-            }
-        };
+        int width = 64, height = 64; // TODO
+        return new WGLTileSet(_baseURL + tileSetId, width, height);
     }
+
+    protected final String _baseURL;
 }

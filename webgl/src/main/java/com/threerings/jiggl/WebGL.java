@@ -15,11 +15,11 @@ import com.threerings.jiggl.view.WGLView;
  */
 public class WebGL
 {
-    public static Context create (Canvas canvas)
+    public static Context create (Canvas canvas, String rsrcRootURL)
     {
         WGLView view = new WGLView(canvas, 500, 500);
         return new Context(new WGLDriver(view, FRAME_DELAY), view.renderer, view,
-                           new WGLTileSetLoader());
+                           new WGLTileSetLoader(rsrcRootURL));
     }
 
     protected static final int FRAME_DELAY = 15; // shoot for 66fps

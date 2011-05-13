@@ -18,16 +18,11 @@ public class GeomTest
     public void execute (final Context ctx)
     {
         final Geometry quad = ctx.renderer.createQuad(1, 1);
-        final Viz quad0 = ctx.view.add(ctx.view.newGeomViz(quad));
-        quad0.color = new Color(1, 0, 0);
-        final Viz quad1 = ctx.view.add(ctx.view.newGeomViz(quad));
-        quad1.color = new Color(0, 1, 0);
-        final Viz quad2 = ctx.view.add(ctx.view.newGeomViz(quad));
-        quad2.color = new Color(0, 0, 1);
-        final Viz quad3 = ctx.view.add(ctx.view.newGeomViz(quad));
-        quad3.color = new Color(0, 1, 1);
-        final Viz quad4 = ctx.view.add(ctx.view.newGeomViz(quad));
-        quad4.color = new Color(1, 1, 0);
+        final Viz quad0 = ctx.view.add(ctx.view.newGeomViz(quad, new Color(1, 0, 0)));
+        final Viz quad1 = ctx.view.add(ctx.view.newGeomViz(quad, new Color(0, 1, 0)));
+        final Viz quad2 = ctx.view.add(ctx.view.newGeomViz(quad, new Color(0, 0, 1)));
+        final Viz quad3 = ctx.view.add(ctx.view.newGeomViz(quad, new Color(0, 1, 1)));
+        final Viz quad4 = ctx.view.add(ctx.view.newGeomViz(quad, new Color(1, 1, 0)));
 
         ctx.tweener.linear(quad0.x).to(2).in(2).then().delay(1).then().action(new Runnable() {
             public void run () {
@@ -41,7 +36,7 @@ public class GeomTest
 
         quad3.x.value = 3;
         quad3.y.value = 3;
-        ctx.tweener.repeat().linear(quad3.rotation).to(2*(float)Math.PI).in(2).
+        ctx.tweener.repeat(quad3).linear(quad3.rotation).to(2*(float)Math.PI).in(2).
             then().linear(quad3.rotation).to(0).in(0);
 
         quad4.x.value = 3;
