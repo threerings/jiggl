@@ -5,6 +5,7 @@
 package com.threerings.jiggl.tween;
 
 import com.threerings.jiggl.util.Scalar;
+import com.threerings.jiggl.view.Viz;
 
 /**
  * Manages the animation of a particular property of a visible.
@@ -146,9 +147,8 @@ public abstract class Tween
     /** A tween that repeats its underlying tween over and over again (until removed). */
     public static class Repeat extends Tween
     {
-        /** Cancels this repeating tween. */
-        public void cancel () {
-            _cancelled = true;
+        public Repeat (Viz viz) {
+            _viz = viz;
         }
 
         @Override
@@ -167,11 +167,11 @@ public abstract class Tween
         @Override
         protected boolean apply (Tweener tweener, float time)
         {
-            // if we're canceled, stop now
-            if (_cancelled) return true;
-
             // if our current chain of tweens is still running, keep going
             if (!super.apply(tweener, time)) return false;
+
+            // if our target viz is no longer active, we're done
+            if (!_viz.isAdded()) return true;
 
             // otherwise, reset to the head of the chain and keep going
             float overrun = _current.getOverrun(time);
@@ -180,7 +180,7 @@ public abstract class Tween
             return false;
         }
 
-        protected boolean _cancelled = false;
+        protected Viz _viz;
     }
 
     /**

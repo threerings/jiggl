@@ -4,7 +4,6 @@
 
 package com.threerings.jiggl.view;
 
-import com.threerings.jiggl.util.Color;
 import com.threerings.jiggl.util.Scalar;
 
 /**
@@ -30,9 +29,6 @@ public abstract class Viz
     /** The rotation of this visible, in radians. */
     public final Scalar rotation = new Scalar(0);
 
-    /** The color of this visible, or null. */
-    public Color color;
-
     /**
      * Returns the width of this visible, including local scaling transformations (but not
      * rotation). Transformations applied by a parent of this visible are also not included.
@@ -46,6 +42,11 @@ public abstract class Viz
     public abstract float getHeight ();
 
     /**
+     * Returns true if this viz is added to a view, false otherwise.
+     */
+    public abstract boolean isAdded ();
+
+    /**
      * Called when this viz is added to a view. The viz should prepare any buffers or shader
      * programs it will need to render itself. Any exception thrown by this method will result in
      * the viz not being added to the view, so the viz should ensure that partially created
@@ -57,10 +58,10 @@ public abstract class Viz
      * Called when this viz is removed from a view. The viz should destroy any buffers or shader
      * programs it created in {@link #onAdd}.
      */
-    protected abstract void onRemove (View view);
+    protected abstract void onRemove ();
 
     /**
      * Instructs this viz to issue the rendering calls needed to visualize itself.
      */
-    protected abstract void render (View view);
+    protected abstract void render ();
 }

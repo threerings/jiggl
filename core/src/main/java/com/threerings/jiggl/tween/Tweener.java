@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.threerings.jiggl.util.Driver;
 import com.threerings.jiggl.util.Scalar;
+import com.threerings.jiggl.view.Viz;
 
 /**
  * Handles the animation of viz properties (position, rotation, etc.).
@@ -104,12 +105,13 @@ public abstract class Tweener
     }
 
     /**
-     * Returns a tweener which can be used to construct a tween that will be repeated until
-     * canceled.
+     * Returns a tweener which can be used to construct a tween that will be repeated until the
+     * supplied viz has been removed from its view. The viz must be added to the view in question
+     * before the next frame tick, or the cancellation will trigger immediately.
      */
-    public Tweener repeat ()
+    public Tweener repeat (Viz viz)
     {
-        return register(new Tween.Repeat()).then();
+        return register(new Tween.Repeat(viz)).then();
     }
 
     /**
